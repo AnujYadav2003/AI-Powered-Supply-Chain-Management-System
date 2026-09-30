@@ -1,0 +1,73 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+
+            - id: product-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/v1/products/**
+
+            - id: category-service
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/v1/categories/**
+
+            - id: order-service
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/v1/orders/**
+
+            - id: inventory-service
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/v1/inventory/**
+
+            - id: warehouse-service
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/v1/warehouses/**
+
+            - id: supplier-service
+              uri: http://localhost:8085
+              predicates:
+                - Path=/api/v1/suppliers/**
+
+            - id: procurement-service
+              uri: http://localhost:8086
+              predicates:
+                - Path=/api/v1/purchase-orders/**
+
+            - id: logistics-service
+              uri: http://localhost:8087
+              predicates:
+                - Path=/api/v1/shipments/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+
+  endpoint:
+    gateway:
+      access: read-only
+
+  management:
+    tracing:
+      sampling:
+        probability: 1.0
+
+    opentelemetry:
+      tracing:
+        export:
+          otlp:
+            endpoint: http://localhost:4318/v1/traces
